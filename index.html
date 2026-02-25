@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>İDA – System Connection Map</title>
+<title>İDA – Sistem Bağlantı Haritası</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -14,289 +14,163 @@ body{
   min-width:1320px;
   padding-bottom:30px;
 }
-
-/* HEADER */
 .hdr{text-align:center;padding:22px 0 10px;}
-.hdr h1{
-  font-family:'Orbitron',monospace;
-  font-size:22px;font-weight:900;letter-spacing:8px;
-  color:#00d4ff;
-  text-shadow:0 0 24px rgba(0,212,255,.55);
-}
+.hdr h1{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;letter-spacing:8px;color:#00d4ff;text-shadow:0 0 24px rgba(0,212,255,.55);}
 .hdr p{font-size:10.5px;color:#1e3040;letter-spacing:2px;margin-top:5px;}
-
-/* ── MAIN LAYOUT ── */
-.wrap{
-  position:relative;
-  width:1310px;
-  margin:0 auto;
-  padding:0 10px;
-}
-
-/* ROW 1 */
-.row1{
-  display:grid;
-  grid-template-columns:210px 1fr 230px;
-  gap:0;
-  align-items:start;
-  margin-bottom:0;
-  position:relative;
-}
-
-/* ROW 2 */
-.row2{
-  display:grid;
-  grid-template-columns:220px 220px 1fr 240px;
-  gap:16px;
-  margin-top:0;
-  position:relative;
-}
-
-/* ── BOX STYLES ── */
-.box{
-  border-radius:8px;
-  padding:13px 14px;
-  font-size:11px;
-  line-height:1;
-}
-.box-orange{
-  border:1.5px dashed rgba(255,140,0,.65);
-  background:rgba(18,10,0,.9);
-  margin:14px 0 0 0;
-}
-.box-red{
-  border:1.5px solid rgba(255,55,70,.6);
-  background:rgba(18,5,8,.9);
-  margin:14px 0 0 0;
-}
-.box-purple{
-  border:1.5px solid rgba(175,70,255,.6);
-  background:rgba(13,5,25,.9);
-}
-.box-teal{
-  border:1.5px solid rgba(0,200,170,.5);
-  background:rgba(0,13,11,.9);
-}
-.box-yellow{
-  border:1.5px dashed rgba(255,210,0,.55);
-  background:rgba(16,13,0,.9);
-}
-
-/* CARRIER */
-.carrier{
-  border:1.5px solid rgba(0,185,255,.45);
-  border-radius:10px;
-  background:rgba(4,14,28,.95);
-  padding:0 0 12px 0;
-  margin:0 18px;
-}
-.carrier-title{
-  font-family:'Orbitron',monospace;
-  font-size:11px;font-weight:700;
-  color:#00d4ff;letter-spacing:1.5px;
-  padding:11px 15px 0;
-  margin-bottom:10px;
-}
-.inner-block{
-  border-radius:8px;
-  padding:11px 13px;
-  margin:0 12px 0 12px;
-}
+.wrap{position:relative;width:1310px;margin:0 auto;padding:0 10px;}
+.row1{display:grid;grid-template-columns:210px 1fr 230px;gap:0;align-items:start;margin-bottom:0;position:relative;}
+.row2{display:grid;grid-template-columns:220px 220px 1fr 240px;gap:16px;margin-top:0;position:relative;}
+.box{border-radius:8px;padding:13px 14px;font-size:11px;line-height:1;}
+.box-orange{border:1.5px dashed rgba(255,140,0,.65);background:rgba(18,10,0,.9);margin:14px 0 0 0;}
+.box-red{border:1.5px solid rgba(255,55,70,.6);background:rgba(18,5,8,.9);margin:14px 0 0 0;}
+.box-purple{border:1.5px solid rgba(175,70,255,.6);background:rgba(13,5,25,.9);}
+.box-teal{border:1.5px solid rgba(0,200,170,.5);background:rgba(0,13,11,.9);}
+.box-yellow{border:1.5px dashed rgba(255,210,0,.55);background:rgba(16,13,0,.9);}
+.carrier{border:1.5px solid rgba(0,185,255,.45);border-radius:10px;background:rgba(4,14,28,.95);padding:0 0 12px 0;margin:0 18px;}
+.carrier-title{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:#00d4ff;letter-spacing:1.5px;padding:11px 15px 0;margin-bottom:10px;}
+.inner-block{border-radius:8px;padding:11px 13px;margin:0 12px 0 12px;}
 .inner-j{border:1px solid rgba(0,210,110,.44);background:rgba(0,20,12,.78);}
 .inner-p{border:1px solid rgba(0,200,175,.4);background:rgba(0,16,14,.78);}
-.uart-bridge{
-  text-align:center;font-size:9px;letter-spacing:3px;
-  color:rgba(0,200,255,.32);
-  padding:5px 0;
-  border-top:1px dashed rgba(0,200,255,.13);
-  border-bottom:1px dashed rgba(0,200,255,.13);
-  margin:7px 12px;
-  animation:ublink 2.5s ease-in-out infinite;
-}
+.uart-bridge{text-align:center;font-size:9px;letter-spacing:3px;color:rgba(0,200,255,.32);padding:5px 0;border-top:1px dashed rgba(0,200,255,.13);border-bottom:1px dashed rgba(0,200,255,.13);margin:7px 12px;animation:ublink 2.5s ease-in-out infinite;}
 @keyframes ublink{0%,100%{color:rgba(0,200,255,.32);}50%{color:rgba(0,200,255,.62);}}
-
-/* BOX TITLE */
-.bt{
-  font-family:'Orbitron',monospace;
-  font-size:11px;font-weight:700;letter-spacing:1.5px;
-  margin-bottom:8px;
-  display:flex;align-items:center;gap:6px;
-}
+.bt{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:1.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .sub{font-size:8.5px;color:#0e2230;letter-spacing:.8px;margin-left:4px;font-family:'Share Tech Mono',monospace;}
 .bsub{font-size:9px;color:#1a2e3a;margin-bottom:8px;letter-spacing:.8px;}
 .r{display:flex;align-items:flex-start;gap:5px;margin-bottom:4px;color:#445a68;font-size:10.5px;line-height:1.45;}
 .r b{color:#7090a0;font-weight:normal;}
 .r .i{width:15px;flex-shrink:0;text-align:center;font-size:10px;}
-.tag{
-  display:inline-block;font-size:8px;padding:1px 5px;border-radius:2px;
-  margin-left:3px;vertical-align:middle;
-}
+.tag{display:inline-block;font-size:8px;padding:1px 5px;border-radius:2px;margin-left:3px;vertical-align:middle;}
 .tag-t{background:rgba(0,200,170,.14);color:#00c8aa;border:1px solid rgba(0,200,170,.3);}
 .tag-r{background:rgba(255,55,65,.16);color:#ff4650;border:1px solid rgba(255,55,65,.32);}
 .tag-o{background:rgba(255,140,0,.16);color:#ff8c00;border:1px solid rgba(255,140,0,.32);}
-.tag-p{background:rgba(175,70,255,.16);color:#b454ff;border:1px solid rgba(175,70,255,.32);}
-.tag-y{background:rgba(255,210,0,.16);color:#ffd200;border:1px solid rgba(255,210,0,.32);}
 .kb{display:inline-block;font-size:8px;padding:1px 5px;background:rgba(255,40,50,.2);color:#ff3840;border:1px solid rgba(255,40,50,.38);border-radius:2px;margin-left:3px;}
-
-/* ── SVG OVERLAY ── */
-.svg-overlay{
-  position:absolute;
-  top:0;left:0;
-  width:100%;height:100%;
-  pointer-events:none;
-  overflow:visible;
-  z-index:10;
-}
-
-/* Animated dash */
+.svg-overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:10;}
 @keyframes flow{from{stroke-dashoffset:300;}to{stroke-dashoffset:0;}}
 .af{stroke-dasharray:9 5;animation:flow 1.8s linear infinite;}
 .am{stroke-dasharray:9 5;animation:flow 2.5s linear infinite;}
 .as{stroke-dasharray:9 5;animation:flow 3.3s linear infinite;}
-
 @keyframes dpulse{0%,100%{r:3;opacity:.9;}50%{r:5;opacity:1;}}
 .dp{animation:dpulse 1.8s ease-in-out infinite;}
-
-/* Connector label badges */
-.conn-lbl{
-  position:absolute;
-  font-size:9px;letter-spacing:.6px;
-  padding:2px 7px;border-radius:3px;
-  font-family:'Share Tech Mono',monospace;
-  white-space:nowrap;
-  z-index:20;
-}
-
-/* LEGEND */
-.legend{
-  display:flex;justify-content:center;gap:24px;
-  padding:12px 0 20px;
-  border-top:1px solid #0d1820;
-  flex-wrap:wrap;
-  margin-top:16px;
-}
+.legend{display:flex;justify-content:center;gap:24px;padding:12px 0 20px;border-top:1px solid #0d1820;flex-wrap:wrap;margin-top:16px;}
 .li{display:flex;align-items:center;gap:7px;font-size:9.5px;color:#243545;}
 </style>
 </head>
 <body>
 
 <div class="hdr">
-  <h1>⚓ İDA – SYSTEM CONNECTION MAP</h1>
+  <h1>⚓ İDA – SİSTEM BAĞLANTI HARİTASI</h1>
   <p>TEKNOFEST 2026 · Herhangi bir bileşenin üzerine gelin ve detaylarını görün</p>
 </div>
 
 <div class="wrap" id="wrap">
 
-  <!-- ══════════════ ROW 1 ══════════════ -->
   <div class="row1" id="row1">
 
-    <!-- LIPO BATTERY -->
+    <!-- LiPo BATARYA -->
     <div class="box box-orange" id="bat">
-      <div class="bt" style="color:#ff8c00;">🔋 LIPO BATTERY</div>
-      <div class="r"><span class="i">→</span>Safety Switch 🔴</div>
-      <div class="r"><span class="i">→</span>Power Module</div>
+      <div class="bt" style="color:#ff8c00;">🔋 LiPo BATARYA</div>
+      <div class="r"><span class="i">→</span>Güvenlik Anahtarı 🔴</div>
+      <div class="r"><span class="i">→</span>Güç Modülü</div>
       <div class="r"><span class="i">⚡</span><b>Buck → Jetson</b></div>
       <div class="r"><span class="i">→</span>PDB → ESC×2</div>
-      <div class="r" style="margin-top:8px;font-size:9px;color:#2a1800;">يوزع طاقة للكل</div>
+      <div class="r" style="margin-top:8px;font-size:9px;color:#2a1800;">Tüm birimlere güç dağıtır</div>
     </div>
 
-    <!-- CARRIER BOARD -->
+    <!-- TAŞIYICI KART -->
     <div class="carrier" id="carrier">
-      <div class="carrier-title">🖥️ PAB-BASE-ORINNX-RC04 — CARRIER BOARD</div>
+      <div class="carrier-title">🖥️ PAB-BASE-ORINNX-RC04 — TAŞIYICI KART</div>
 
       <div class="inner-block inner-j">
         <div class="bt" style="color:#00d26e;">
-          🧠 JETSON ORIN NX <span class="sub">VISION + AI</span>
+          🧠 JETSON ORIN NX <span class="sub">GÖRÜNTÜ + YAPAY ZEKA</span>
         </div>
-        <div class="r"><span class="i">📷</span>ZED 2 Video → <b>YOLOv8</b> Detection</div>
-        <div class="r"><span class="i">📐</span>حساب <b>offset_norm</b> (−1 → +1)</div>
-        <div class="r"><span class="i">🔴</span>RPLiDAR S3 → SLAM → <b>Costmap</b></div>
-        <div class="r"><span class="i">💾</span>تسجيل MP4 + CSV + Map → USB</div>
-        <div class="r"><span class="i">📡</span>offset → Pixhawk (Internal UART)</div>
+        <div class="r"><span class="i">📷</span>ZED 2 Video → <b>YOLOv8</b> Tespiti</div>
+        <div class="r"><span class="i">📐</span><b>offset_norm</b> Hesaplama (−1 → +1)</div>
+        <div class="r"><span class="i">🔴</span>RPLiDAR S3 → SLAM → <b>Maliyet Haritası</b></div>
+        <div class="r"><span class="i">💾</span>MP4 + CSV + Harita → USB Kayıt</div>
+        <div class="r"><span class="i">📡</span>offset → Pixhawk (Dahili UART)</div>
       </div>
 
-      <div class="uart-bridge">↑↓ &nbsp; INTERNAL UART 10Hz &nbsp; ↑↓</div>
+      <div class="uart-bridge">↑↓ &nbsp; DAHİLİ UART 10Hz &nbsp; ↑↓</div>
 
       <div class="inner-block inner-p">
         <div class="bt" style="color:#00c8aa;">
-          🎯 PIXHAWK 6X <span class="sub">AUTOPILOT</span>
+          🎯 PIXHAWK 6X <span class="sub">OTOPİLOT</span>
         </div>
         <div class="r"><span class="i">📐</span>offset_norm ← Jetson</div>
-        <div class="r"><span class="i">🌀</span>PID Controller → <b>زاوية الهدف</b></div>
-        <div class="r"><span class="i">🌍</span>GPS Waypoints → <b>Parkur 1 &amp; 2</b></div>
-        <div class="r"><span class="i">💥</span>Kamikaze Mode → <b>Parkur 3</b></div>
+        <div class="r"><span class="i">🌀</span>PID Kontrolcüsü → <b>Hedef Yön Açısı</b></div>
+        <div class="r"><span class="i">🌍</span>GPS Noktaları → <b>Parkur 1 &amp; 2</b></div>
+        <div class="r"><span class="i">💥</span>Kamikaze Modu → <b>Parkur 3</b></div>
         <div class="r"><span class="i">⚙️</span>PWM → ESC + Servo</div>
-        <div class="r"><span class="i">📡</span>Telemetry RF → GCS</div>
+        <div class="r"><span class="i">📡</span>Telemetri RF → YKİ</div>
       </div>
     </div>
 
-    <!-- GCS -->
+    <!-- YKİ -->
     <div class="box box-red" id="gcs">
-      <div class="bt" style="color:#ff4650;">🖥️ GCS — YKİ</div>
-      <div class="r"><span class="i">🗺️</span>خريطة real-time</div>
-      <div class="r"><span class="i">📍</span>إرسال <b>Waypoints</b></div>
-      <div class="r"><span class="i">▶️</span><b>Start Mission</b></div>
-      <div class="r"><span class="i">🔴</span><b>Motor Kill</b><span class="kb">فقط</span></div>
-      <div class="r"><span class="i">✖</span><span style="color:#2e1018;">لا أوامر أثناء الحركة</span></div>
+      <div class="bt" style="color:#ff4650;">🖥️ YKİ — YER KONTROL</div>
+      <div class="r"><span class="i">🗺️</span>Gerçek Zamanlı Harita</div>
+      <div class="r"><span class="i">📍</span><b>Görev Noktası</b> Yükle</div>
+      <div class="r"><span class="i">▶️</span><b>Görevi Başlat</b></div>
+      <div class="r"><span class="i">🔴</span><b>Motor Kes</b><span class="kb">Yalnızca</span></div>
+      <div class="r"><span class="i">✖</span><span style="color:#2e1018;">Hareket sırasında komut yok</span></div>
     </div>
 
-  </div><!-- /row1 -->
+  </div>
 
-  <!-- ══════════════ ROW 2 ══════════════ -->
   <div class="row2" id="row2" style="margin-top:60px;">
 
-    <!-- ZED 2 CAMERA -->
+    <!-- ZED 2 KAMERA -->
     <div class="box box-purple" id="cam">
       <div class="bt" style="color:#b454ff;">📷 ZED 2</div>
-      <div class="bsub">Stereo Camera · USB 3.0</div>
-      <div class="r"><span class="i">👁️</span>Stereo Vision</div>
-      <div class="r"><span class="i">📏</span>Depth: 0.3 → 20m</div>
-      <div class="r"><span class="i">🎨</span>RGB + Depth Map</div>
+      <div class="bsub">Stereo Kamera · USB 3.0</div>
+      <div class="r"><span class="i">👁️</span>Stereo Görüntü</div>
+      <div class="r"><span class="i">📏</span>Derinlik: 0.3 → 20m</div>
+      <div class="r"><span class="i">🎨</span>RGB + Derinlik Haritası</div>
       <div class="r"><span class="i">📌</span>USB 3.0 → Jetson</div>
-      <div class="r"><span class="i">🎯</span>Target Detection</div>
-      <div class="r"><span class="i">💾</span>تسجيل MP4+timestamp</div>
-      <div style="margin-top:7px;"><span class="tag tag-o">DC Power</span></div>
+      <div class="r"><span class="i">🎯</span>Hedef Tespiti</div>
+      <div class="r"><span class="i">💾</span>MP4 + Zaman Damgası Kaydı</div>
+      <div style="margin-top:7px;"><span class="tag tag-o">DC Güç</span></div>
     </div>
 
-    <!-- RPLIDAR -->
+    <!-- RPLiDAR -->
     <div class="box box-teal" id="lidar">
-      <div class="bt" style="color:#00c8aa;">🔴 RPLIDAR S3</div>
+      <div class="bt" style="color:#00c8aa;">🔴 RPLiDAR S3</div>
       <div class="bsub">SLAMTEC · 360° · 40m</div>
-      <div class="r"><span class="i">🟢</span>Scan 360°</div>
-      <div class="r"><span class="i">📏</span>Range: 40 متر</div>
+      <div class="r"><span class="i">🟢</span>360° Tarama</div>
+      <div class="r"><span class="i">📏</span>Menzil: 40 Metre</div>
       <div class="r"><span class="i">📌</span>USB → Jetson</div>
-      <div class="r"><span class="i">🗺️</span>SLAM → Costmap 2D</div>
-      <div class="r"><span class="i">⚠️</span>Obstacle Detection</div>
-      <div class="r"><span class="i">💾</span>تسجيل data @ 1Hz</div>
+      <div class="r"><span class="i">🗺️</span>SLAM → 2D Maliyet Haritası</div>
+      <div class="r"><span class="i">⚠️</span>Engel Tespiti</div>
+      <div class="r"><span class="i">💾</span>1 Hz Veri Kaydı</div>
     </div>
 
-    <!-- GPS + SENSORS -->
+    <!-- GPS + SENSÖRLER -->
     <div class="box box-teal" id="gps">
-      <div class="bt" style="color:#00c8aa;">🛰️ GPS + SENSORS</div>
-      <div class="bsub">Here3+ · IMU · RC Receiver · SiK</div>
+      <div class="bt" style="color:#00c8aa;">🛰️ GPS + SENSÖRLER</div>
+      <div class="bsub">Here3+ · IMU · RC Alıcı · SiK</div>
       <div class="r"><span class="i">🌍</span>Here3+ GPS <span class="tag tag-t">CAN</span></div>
-      <div class="r"><span class="i">🔄</span>IMU (Roll/Pitch/Yaw)</div>
-      <div class="r"><span class="i">📻</span>RC Receiver</div>
-      <div class="r"><span class="i">📡</span>Telemetry Module</div>
-      <div class="r"><span class="i">📌</span>كلهم → Pixhawk</div>
+      <div class="r"><span class="i">🔄</span>IMU (Yalpa/Yunuslama/Pervane)</div>
+      <div class="r"><span class="i">📻</span>RC Alıcı</div>
+      <div class="r"><span class="i">📡</span>Telemetri Modülü</div>
+      <div class="r"><span class="i">📌</span>Tümü → Pixhawk'a Bağlı</div>
       <div class="r" style="margin-top:5px;"><span class="i">⚠️</span><span style="color:#2e1018;">WiFi KAPALI – 2.4GHz YASAK</span></div>
     </div>
 
-    <!-- ACTUATORS -->
+    <!-- AKTÜATÖRLER -->
     <div class="box box-yellow" id="act">
-      <div class="bt" style="color:#ffd200;">⚙️ ACTUATORS</div>
-      <div class="bsub">ESC×2 · Thrusters · Safety Switch</div>
-      <div class="r"><span class="i">🔵</span>ESC×2 → Thrusters</div>
-      <div class="r"><span class="i">🔵</span>Servo → Rudder</div>
+      <div class="bt" style="color:#ffd200;">⚙️ AKTÜATÖRLER</div>
+      <div class="bsub">ESC×2 · İticiler · Güvenlik Anahtarı</div>
+      <div class="r"><span class="i">🔵</span>ESC×2 → İticiler</div>
+      <div class="r"><span class="i">🔵</span>Servo → Dümen</div>
       <div class="r"><span class="i">📌</span>PWM ← Pixhawk</div>
-      <div class="r"><span class="i">⚡</span>DC ← Power Module</div>
-      <div class="r"><span class="i">🔴</span><b>Motor Kill</b><span class="kb">(فعلي)</span></div>
-      <div class="r" style="margin-top:5px;font-size:9px;color:#2a2200;">⚠ Nozzle Guard + Water Isolation</div>
+      <div class="r"><span class="i">⚡</span>DC ← Güç Modülü</div>
+      <div class="r"><span class="i">🔴</span><b>Motor Kes</b><span class="kb">(Fiziksel)</span></div>
+      <div class="r" style="margin-top:5px;font-size:9px;color:#2a2200;">⚠ Nozul Koruması + Su İzolasyonu</div>
     </div>
 
-  </div><!-- /row2 -->
+  </div>
 
-  <!-- ══════════════ SVG LINES ══════════════ -->
   <svg class="svg-overlay" id="svg-lines" viewBox="0 0 1310 700" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;overflow:visible;">
   <defs>
     <marker id="mo" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0 0,8 4,0 8" fill="#ff8c00"/></marker>
@@ -304,26 +178,24 @@ body{
     <marker id="mp" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0 0,8 4,0 8" fill="#b454ff"/></marker>
     <marker id="mt" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0 0,8 4,0 8" fill="#00c8aa"/></marker>
     <marker id="my" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0 0,8 4,0 8" fill="#ffd200"/></marker>
-    <marker id="mg" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0 0,8 4,0 8" fill="#00d26e"/></marker>
     <filter id="go"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   </defs>
   </svg>
 
-</div><!-- /wrap -->
+</div>
 
-<!-- LEGEND -->
 <div class="legend">
   <div class="li">
     <svg width="38" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="#ff8c00" stroke-width="2" stroke-dasharray="7,4"/><polygon points="27,2 35,5 27,8" fill="#ff8c00"/></svg>
-    DC Power
+    DC Güç
   </div>
   <div class="li">
     <svg width="38" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="#00d26e" stroke-width="2"/><polygon points="27,2 35,5 27,8" fill="#00d26e"/></svg>
-    Internal UART (offset_norm)
+    Dahili UART (offset_norm)
   </div>
   <div class="li">
     <svg width="38" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="#b454ff" stroke-width="2" stroke-dasharray="7,4"/><polygon points="27,2 35,5 27,8" fill="#b454ff"/></svg>
-    USB 3.0 (ZED 2 Video)
+    USB 3.0 (ZED 2 Videosu)
   </div>
   <div class="li">
     <svg width="38" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="#00c8aa" stroke-width="2" stroke-dasharray="7,4"/><polygon points="27,2 35,5 27,8" fill="#00c8aa"/></svg>
@@ -331,18 +203,15 @@ body{
   </div>
   <div class="li">
     <svg width="38" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="#ffd200" stroke-width="2" stroke-dasharray="7,4"/><polygon points="27,2 35,5 27,8" fill="#ffd200"/></svg>
-    PWM → Actuators
+    PWM → Aktüatörler
   </div>
   <div class="li">
     <svg width="38" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="#ff4650" stroke-width="2" stroke-dasharray="7,4"/><polygon points="27,2 35,5 27,8" fill="#ff4650"/></svg>
-    RF Telemetry → GCS
+    RF Telemetri → YKİ
   </div>
 </div>
 
 <script>
-// Draw lines dynamically based on actual element positions
-// This ensures lines always connect exactly at box edges, never inside
-
 function getBox(id) {
   const el = document.getElementById(id);
   const wrap = document.getElementById('wrap');
@@ -412,7 +281,6 @@ function makeDot(x, y, color, delay) {
 
 function drawAll() {
   const svg = document.getElementById('svg-lines');
-  // Clear old lines (keep defs)
   const defs = svg.querySelector('defs');
   while(svg.lastChild && svg.lastChild !== defs) svg.removeChild(svg.lastChild);
 
@@ -424,28 +292,26 @@ function drawAll() {
   const gps     = getBox('gps');
   const act     = getBox('act');
 
-  // Update SVG viewBox to match wrap size
   const wrap = document.getElementById('wrap');
   const wh = wrap.getBoundingClientRect().height;
   const ww = wrap.getBoundingClientRect().width;
   svg.setAttribute('viewBox', `0 0 ${ww} ${wh}`);
   svg.style.height = wh + 'px';
 
-  // Routing gap between row1 bottom and row2 top
-  const gapY = (carrier.bottom + cam.top) / 2; // midpoint of gap
+  const gapY = (carrier.bottom + cam.top) / 2;
 
-  // ── 1. BATTERY right → CARRIER left  (DC Power, orange)
+  // 1. BATARYA → TAŞIYICI  (DC Güç)
   {
     const x1 = bat.right, y1 = bat.cy;
     const x2 = carrier.left, y2 = bat.cy;
     svg.appendChild(makeLine(svg,[[x1,y1],[x2,y2]],'#ff8c00','af',null,2.2,'mo'));
-    svg.appendChild(makeLabel(svg,(x1+x2)/2, y1-14,'DC Power','#ff8c00','rgba(18,10,0,.96)','#ff8c00'));
+    svg.appendChild(makeLabel(svg,(x1+x2)/2, y1-14,'DC Güç','#ff8c00','rgba(18,10,0,.96)','#ff8c00'));
     svg.appendChild(makeDot(x1,y1,'#ff8c00','0s'));
   }
 
-  // ── 2. CARRIER right → GCS left  (RF Telemetry, red dashed)
+  // 2. TAŞIYICI → YKİ  (RF Telemetri)
   {
-    const x1 = carrier.right, y1 = carrier.cy + 60; // Pixhawk area
+    const x1 = carrier.right, y1 = carrier.cy + 60;
     const x2 = gcs.left, y2 = gcs.cy;
     const mx = (x1+x2)/2;
     const pl = document.createElementNS('http://www.w3.org/2000/svg','path');
@@ -457,26 +323,23 @@ function drawAll() {
     pl.setAttribute('class','am');
     pl.setAttribute('marker-end','url(#mr)');
     svg.appendChild(pl);
-    svg.appendChild(makeLabel(svg,x1+52,y1-12,'RF Telemetry','#ff4650','rgba(18,5,8,.96)','#ff4650'));
+    svg.appendChild(makeLabel(svg,x1+52,y1-12,'RF Telemetri','#ff4650','rgba(18,5,8,.96)','#ff4650'));
     svg.appendChild(makeDot(x1,y1,'#ff4650','.3s'));
   }
 
-  // ── POWER DOWN lines: Carrier bottom → sensors top
-  // From Jetson (top inner block) bottom area
-
-  // Jetson→Camera DC Power
+  // Jetson → Kamera  DC Güç
   {
     const x1 = carrier.left + (carrier.right - carrier.left)*0.28;
     const y1 = carrier.bottom;
     const x2 = cam.cx;
     const y2 = cam.top;
     svg.appendChild(makeLine(svg,[[x1,y1],[x1,gapY],[x2,gapY],[x2,y2]],'#ff8c00','as','.5s',2,'mo'));
-    svg.appendChild(makeLabel(svg,(x1+x2)/2-10,gapY-12,'DC Power','#ff8c00','rgba(18,10,0,.96)','#ff8c00'));
+    svg.appendChild(makeLabel(svg,(x1+x2)/2-10,gapY-12,'DC Güç','#ff8c00','rgba(18,10,0,.96)','#ff8c00'));
     svg.appendChild(makeDot(x2,y2,'#ff8c00','.4s'));
     svg.appendChild(makeDot(x1,y1,'#ff8c00','.1s'));
   }
 
-  // Jetson→LiDAR DC Power
+  // Jetson → LiDAR  DC Güç
   {
     const x1 = carrier.left + (carrier.right - carrier.left)*0.38;
     const y1 = carrier.bottom;
@@ -487,7 +350,7 @@ function drawAll() {
     svg.appendChild(makeDot(x1,y1,'#ff8c00','.4s'));
   }
 
-  // Jetson→GPS DC Power
+  // Jetson → GPS  DC Güç
   {
     const x1 = carrier.cx;
     const y1 = carrier.bottom;
@@ -498,22 +361,19 @@ function drawAll() {
     svg.appendChild(makeDot(x1,y1,'#ff8c00','.7s'));
   }
 
-  // Pixhawk→Actuators PWM
+  // Pixhawk → Aktüatörler  PWM
   {
     const x1 = carrier.left + (carrier.right - carrier.left)*0.78;
     const y1 = carrier.bottom;
     const x2 = act.cx;
     const y2 = act.top;
     svg.appendChild(makeLine(svg,[[x1,y1],[x1,gapY],[x2,gapY],[x2,y2]],'#ffd200','am','.3s',2,'my'));
-    svg.appendChild(makeLabel(svg,(x1+x2)/2+20,gapY-12,'PWM Signals','#ffd200','rgba(16,13,0,.96)','#ffd200'));
+    svg.appendChild(makeLabel(svg,(x1+x2)/2+20,gapY-12,'PWM Sinyalleri','#ffd200','rgba(16,13,0,.96)','#ffd200'));
     svg.appendChild(makeDot(x2,y2,'#ffd200','.5s'));
     svg.appendChild(makeDot(x1,y1,'#ffd200','.2s'));
   }
 
-  // ── DATA UP lines: sensors top → Carrier bottom
-  // Offset slightly from power-down lines to avoid overlap
-
-  // Camera USB 3.0 → Jetson
+  // Kamera → Jetson  USB 3.0
   {
     const x1 = cam.right - 30;
     const y1 = cam.top;
@@ -525,7 +385,7 @@ function drawAll() {
     svg.appendChild(makeDot(x2,y2,'#b454ff','.8s'));
   }
 
-  // LiDAR USB → Jetson
+  // LiDAR → Jetson  USB
   {
     const x1 = lidar.right - 25;
     const y1 = lidar.top;
@@ -533,11 +393,11 @@ function drawAll() {
     const y2 = carrier.bottom;
     const elbowY = gapY - 26;
     svg.appendChild(makeLine(svg,[[x1,y1],[x1,elbowY],[x2,elbowY],[x2,y2]],'#00c8aa','am','.5s',1.8,'mt'));
-    svg.appendChild(makeLabel(svg,(x1+x2)/2+10,elbowY-12,'USB · Scan','#00c8aa','rgba(0,13,11,.96)','#00c8aa'));
+    svg.appendChild(makeLabel(svg,(x1+x2)/2+10,elbowY-12,'USB · Tarama','#00c8aa','rgba(0,13,11,.96)','#00c8aa'));
     svg.appendChild(makeDot(x2,y2,'#00c8aa','1.1s'));
   }
 
-  // GPS CAN → Pixhawk
+  // GPS → Pixhawk  CAN
   {
     const x1 = gps.right - 25;
     const y1 = gps.top;
@@ -550,10 +410,8 @@ function drawAll() {
   }
 }
 
-// Draw after layout is complete
 window.addEventListener('load', () => {
   drawAll();
-  // Redraw on resize
   let t;
   window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(drawAll, 80); });
 });
