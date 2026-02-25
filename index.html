@@ -3,955 +3,207 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>İDA Fiziksel Bağlantı Şeması</title>
+<title>İDA – Sistem Bağlantı Haritası</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
-
-  :root {
-    --bg: #060a0f;
-    --panel: #0b1220;
-    --border: #1a2a3a;
-    --text: #b0cce0;
-    --dim: #3a6080;
-
-    --jetson-c: #00d4ff;
-    --pixhawk-c: #ff6b35;
-    --lidar-c: #39ff14;
-    --cam-c: #ffd700;
-    --telem-c: #bf5af2;
-    --motor-c: #ff4560;
-    --power-c: #ffaa00;
-    --esc-c: #ff4560;
-    --gps-c: #00ffcc;
-    --imu-c: #ff9f43;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Rajdhani', sans-serif;
-    padding: 20px;
-    background-image:
-      radial-gradient(ellipse at 50% 0%, rgba(0,212,255,0.06) 0%, transparent 60%),
-      linear-gradient(rgba(0,212,255,0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,212,255,0.015) 1px, transparent 1px);
-    background-size: 100% 100%, 50px 50px, 50px 50px;
-    min-height: 100vh;
-  }
-
-  .page-header {
-    text-align: center;
-    padding: 16px 0 20px;
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--border);
-    position: relative;
-  }
-  .page-header::after {
-    content:'';
-    position:absolute; bottom:-1px; left:50%; transform:translateX(-50%);
-    width:300px; height:2px;
-    background: linear-gradient(90deg, transparent, var(--jetson-c), transparent);
-  }
-  .page-header h1 {
-    font-family: 'Orbitron', monospace;
-    font-size: 18px; font-weight: 900;
-    color: var(--jetson-c);
-    letter-spacing: 4px;
-    text-shadow: 0 0 20px rgba(0,212,255,0.4);
-  }
-  .page-header p {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px; color: var(--dim);
-    letter-spacing: 2px; margin-top: 5px;
-  }
-
-  .diagram-wrapper {
-    max-width: 1160px;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  /* ── MAIN GRID ── */
-  .main-grid {
-    display: grid;
-    grid-template-columns: 220px 1fr 220px;
-    grid-template-rows: auto auto auto auto auto;
-    gap: 0;
-    position: relative;
-  }
-
-  /* ── NODE CARDS ── */
-  .node {
-    border: 1px solid;
-    border-radius: 8px;
-    padding: 12px 14px;
-    position: relative;
-    overflow: hidden;
-  }
-  .node::before {
-    content:'';
-    position:absolute; top:0; left:0; right:0; height:2px;
-  }
-
-  /* color themes */
-  .n-jetson   { border-color: rgba(0,212,255,0.4); background: rgba(0,212,255,0.04); }
-  .n-jetson::before { background: linear-gradient(90deg,transparent,var(--jetson-c),transparent); }
-
-  .n-pixhawk  { border-color: rgba(255,107,53,0.4); background: rgba(255,107,53,0.04); }
-  .n-pixhawk::before { background: linear-gradient(90deg,transparent,var(--pixhawk-c),transparent); }
-
-  .n-lidar    { border-color: rgba(57,255,20,0.35); background: rgba(57,255,20,0.03); }
-  .n-lidar::before { background: linear-gradient(90deg,transparent,var(--lidar-c),transparent); }
-
-  .n-cam      { border-color: rgba(255,215,0,0.35); background: rgba(255,215,0,0.03); }
-  .n-cam::before { background: linear-gradient(90deg,transparent,var(--cam-c),transparent); }
-
-  .n-telem    { border-color: rgba(191,90,242,0.4); background: rgba(191,90,242,0.04); }
-  .n-telem::before { background: linear-gradient(90deg,transparent,var(--telem-c),transparent); }
-
-  .n-esc      { border-color: rgba(255,69,96,0.4); background: rgba(255,69,96,0.04); }
-  .n-esc::before { background: linear-gradient(90deg,transparent,var(--esc-c),transparent); }
-
-  .n-power    { border-color: rgba(255,170,0,0.4); background: rgba(255,170,0,0.04); }
-  .n-power::before { background: linear-gradient(90deg,transparent,var(--power-c),transparent); }
-
-  .n-gps      { border-color: rgba(0,255,204,0.35); background: rgba(0,255,204,0.03); }
-  .n-gps::before { background: linear-gradient(90deg,transparent,var(--gps-c),transparent); }
-
-  .n-safety   { border-color: rgba(255,69,96,0.5); background: rgba(255,69,96,0.06); }
-  .n-safety::before { background: linear-gradient(90deg,transparent,#ff4560,transparent); }
-
-  .node-title {
-    font-family: 'Orbitron', monospace;
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 1px; margin-bottom: 3px;
-  }
-  .n-jetson   .node-title { color: var(--jetson-c); }
-  .n-pixhawk  .node-title { color: var(--pixhawk-c); }
-  .n-lidar    .node-title { color: var(--lidar-c); }
-  .n-cam      .node-title { color: var(--cam-c); }
-  .n-telem    .node-title { color: var(--telem-c); }
-  .n-esc      .node-title { color: var(--esc-c); }
-  .n-power    .node-title { color: var(--power-c); }
-  .n-gps      .node-title { color: var(--gps-c); }
-  .n-safety   .node-title { color: #ff4560; }
-
-  .node-sub {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px; color: var(--dim);
-    letter-spacing: 1px; margin-bottom: 8px;
-  }
-
-  .pin-list { display: flex; flex-direction: column; gap: 4px; }
-
-  .pin-row {
-    display: flex; align-items: center; gap: 7px;
-    padding: 3px 6px;
-    border-radius: 3px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.04);
-  }
-
-  .pin-badge {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px; padding: 1px 5px;
-    border-radius: 2px; white-space: nowrap; flex-shrink: 0;
-  }
-
-  .pin-uart  { background: rgba(0,212,255,0.18); color: var(--jetson-c); border:1px solid rgba(0,212,255,0.3); }
-  .pin-usb   { background: rgba(255,215,0,0.15); color: var(--cam-c); border:1px solid rgba(255,215,0,0.3); }
-  .pin-csi   { background: rgba(255,170,0,0.15); color: var(--power-c); border:1px solid rgba(255,170,0,0.3); }
-  .pin-eth   { background: rgba(57,255,20,0.12); color: var(--lidar-c); border:1px solid rgba(57,255,20,0.3); }
-  .pin-pwm   { background: rgba(255,69,96,0.18); color: var(--esc-c); border:1px solid rgba(255,69,96,0.3); }
-  .pin-can   { background: rgba(255,107,53,0.18); color: var(--pixhawk-c); border:1px solid rgba(255,107,53,0.3); }
-  .pin-spi   { background: rgba(191,90,242,0.18); color: var(--telem-c); border:1px solid rgba(191,90,242,0.3); }
-  .pin-i2c   { background: rgba(0,255,204,0.12); color: var(--gps-c); border:1px solid rgba(0,255,204,0.3); }
-  .pin-pwr   { background: rgba(255,170,0,0.18); color: var(--power-c); border:1px solid rgba(255,170,0,0.3); }
-  .pin-gpio  { background: rgba(180,180,180,0.12); color: #ccc; border:1px solid rgba(180,180,180,0.2); }
-
-  .pin-name {
-    font-size: 10px; font-weight: 600; color: var(--text); flex: 1;
-  }
-  .pin-wire {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px; color: var(--dim);
-  }
-
-  /* ── JETSON CENTER BLOCK ── */
-  .jetson-center {
-    grid-column: 2;
-    grid-row: 1 / 6;
-    margin: 0 16px;
-  }
-
-  .jblock {
-    border: 2px solid rgba(0,212,255,0.5);
-    border-radius: 12px;
-    background: rgba(0,212,255,0.03);
-    padding: 16px;
-    position: relative;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .jblock::before {
-    content:'';
-    position:absolute; top:0; left:0; right:0; height:3px;
-    border-radius:12px 12px 0 0;
-    background: linear-gradient(90deg, var(--jetson-c), rgba(0,212,255,0.2), var(--jetson-c));
-  }
-
-  .jblock-header {
-    text-align: center;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(0,212,255,0.15);
-  }
-
-  .jblock-title {
-    font-family: 'Orbitron', monospace;
-    font-size: 13px; font-weight: 900;
-    color: var(--jetson-c);
-    letter-spacing: 2px;
-    text-shadow: 0 0 15px rgba(0,212,255,0.4);
-  }
-
-  .jblock-sub {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px; color: var(--dim);
-    letter-spacing: 1px; margin-top: 4px;
-  }
-
-  .jport-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .jport {
-    padding: 8px 10px;
-    border-radius: 5px;
-    border: 1px solid;
-    position: relative;
-  }
-
-  .jport-usb   { border-color: rgba(255,215,0,0.3); background: rgba(255,215,0,0.04); }
-  .jport-uart  { border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.04); }
-  .jport-csi   { border-color: rgba(255,170,0,0.3); background: rgba(255,170,0,0.04); }
-  .jport-gpio  { border-color: rgba(57,255,20,0.25); background: rgba(57,255,20,0.03); }
-
-  .jport-label {
-    font-family: 'Orbitron', monospace;
-    font-size: 9px; font-weight: 700; letter-spacing: 1px;
-    margin-bottom: 4px;
-  }
-  .jport-usb  .jport-label { color: var(--cam-c); }
-  .jport-uart .jport-label { color: var(--jetson-c); }
-  .jport-csi  .jport-label { color: var(--power-c); }
-  .jport-gpio .jport-label { color: var(--lidar-c); }
-
-  .jport-conn {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px; color: var(--dim);
-    line-height: 1.6;
-  }
-
-  .jport-dot {
-    display: inline-block;
-    width: 6px; height: 6px; border-radius: 50%;
-    margin-right: 4px; vertical-align: middle;
-  }
-
-  .software-stack {
-    margin-top: 4px;
-    padding: 10px;
-    background: rgba(0,212,255,0.04);
-    border: 1px dashed rgba(0,212,255,0.2);
-    border-radius: 6px;
-  }
-
-  .sw-title {
-    font-family: 'Orbitron', monospace;
-    font-size: 9px; color: rgba(0,212,255,0.6);
-    letter-spacing: 2px; margin-bottom: 6px; text-align: center;
-  }
-
-  .sw-grid {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 5px;
-  }
-
-  .sw-item {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px;
-    padding: 3px 6px;
-    border-radius: 3px;
-    background: rgba(0,212,255,0.08);
-    color: rgba(0,212,255,0.8);
-    border: 1px solid rgba(0,212,255,0.15);
-    text-align: center;
-    letter-spacing: 0.5px;
-  }
-
-  /* ── LEFT / RIGHT COLUMNS ── */
-  .left-col {
-    grid-column: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .right-col {
-    grid-column: 3;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  /* ── WIRE LEGENDS ── */
-  .wire-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px 16px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    margin-top: 20px;
-    justify-content: center;
-  }
-
-  .wire-item {
-    display: flex; align-items: center; gap: 6px;
-  }
-
-  .wire-color {
-    width: 28px; height: 3px; border-radius: 2px;
-  }
-
-  .wire-text {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px; color: var(--dim);
-    letter-spacing: 1px;
-  }
-
-  /* ── WIRING DETAIL TABLE ── */
-  .wiring-table {
-    width: 100%; border-collapse: collapse;
-    margin-top: 20px; font-size: 11px;
-  }
-  .wiring-table th {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px; letter-spacing: 2px;
-    color: var(--dim); padding: 6px 10px;
-    text-align: left; border-bottom: 1px solid var(--border);
-    background: rgba(0,0,0,0.3);
-  }
-  .wiring-table td {
-    padding: 6px 10px;
-    border-bottom: 1px solid rgba(26,42,58,0.5);
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600; font-size: 11px;
-  }
-  .wiring-table tr:hover td { background: rgba(0,212,255,0.03); }
-  .wiring-table .section-header td {
-    background: rgba(0,0,0,0.4);
-    color: var(--dim);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px; letter-spacing: 2px;
-    padding: 4px 10px;
-  }
-
-  .col-from { color: var(--jetson-c); }
-  .col-to   { color: var(--text); }
-  .col-pin  { font-family:'Share Tech Mono',monospace; font-size:9px; color: var(--cam-c); }
-  .col-wire { font-family:'Share Tech Mono',monospace; font-size:9px; }
-  .col-note { color: var(--dim); font-size: 10px; }
-
-  .b { font-weight:700; }
-
-  /* connection lines SVG overlay */
-  .conn-note {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px;
-    padding: 2px 6px;
-    border-radius: 3px;
-    display: inline-block;
-    margin: 2px 0;
-  }
-
-  .section-box {
-    margin-top: 20px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .section-box-header {
-    padding: 10px 16px;
-    background: rgba(0,212,255,0.05);
-    border-bottom: 1px solid var(--border);
-    font-family: 'Orbitron', monospace;
-    font-size: 11px;
-    color: var(--jetson-c);
-    letter-spacing: 3px;
-  }
-  .section-box-body { padding: 16px; }
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0c1118;font-family:'Share Tech Mono',monospace;color:#8aabb8;overflow-x:auto;}
+.hdr{text-align:center;padding:22px 0 14px;}
+.hdr h1{font-family:'Orbitron',monospace;font-size:21px;font-weight:900;letter-spacing:7px;color:#00d4ff;text-shadow:0 0 28px rgba(0,212,255,.5);}
+.hdr h1 span{color:#203040;}
+.hdr p{font-size:11px;color:#203545;letter-spacing:2px;margin-top:6px;}
+.cvs{position:relative;width:1330px;height:780px;margin:0 auto;}
+.lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;}
+.bx{position:absolute;border-radius:8px;padding:13px 15px;z-index:3;font-size:11px;line-height:1;}
+.bx-orange{border:1.5px dashed rgba(255,150,0,.55);background:rgba(20,13,0,.88);}
+.bx-red{border:1.5px solid rgba(255,60,75,.5);background:rgba(20,5,8,.88);}
+.bx-purple{border:1.5px solid rgba(175,70,255,.5);background:rgba(14,5,26,.88);}
+.bx-teal{border:1.5px solid rgba(0,200,170,.42);background:rgba(0,14,12,.88);}
+.bx-yellow{border:1.5px dashed rgba(255,210,0,.45);background:rgba(18,15,0,.88);}
+.carrier{position:absolute;border:1.5px solid rgba(0,190,255,.42);border-radius:9px;background:rgba(4,15,30,.9);z-index:2;}
+.inner{border-radius:7px;padding:11px 13px;margin:0 12px;}
+.inner-j{border:1px solid rgba(0,210,110,.45);background:rgba(0,22,14,.7);}
+.inner-p{border:1px solid rgba(0,200,175,.4);background:rgba(0,18,16,.7);}
+.bt{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:1.5px;margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+.bs{font-size:9px;color:#1e3040;margin-bottom:7px;letter-spacing:.8px;}
+.r{display:flex;align-items:flex-start;gap:5px;margin-bottom:4px;color:#506878;font-size:10.5px;line-height:1.4;}
+.r b{color:#7a9fb0;font-weight:normal;}
+.r .i{width:14px;flex-shrink:0;text-align:center;font-size:10px;}
+.bd{display:inline-block;font-size:8.5px;padding:0 5px;border-radius:2px;margin-left:3px;vertical-align:middle;}
+.bd-o{background:rgba(255,140,0,.2);color:#ff8c00;border:1px solid rgba(255,140,0,.35);}
+.bd-r{background:rgba(255,55,65,.2);color:#ff4650;border:1px solid rgba(255,55,65,.35);}
+.bd-t{background:rgba(0,200,170,.15);color:#00c8aa;border:1px solid rgba(0,200,170,.3);}
+.kb{display:inline-block;font-size:8.5px;padding:0 5px;background:rgba(255,40,50,.22);color:#ff3840;border:1px solid rgba(255,40,50,.4);border-radius:2px;margin-left:3px;}
+.ch{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:#00d4ff;letter-spacing:2px;padding:9px 16px 0 16px;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.ub{text-align:center;font-size:9.5px;letter-spacing:3px;color:rgba(0,200,255,.22);padding:4px 16px;border-top:1px dashed rgba(0,200,255,.1);border-bottom:1px dashed rgba(0,200,255,.1);margin:6px 0;}
+.sl{font-size:8.5px;color:#1a3028;font-family:'Share Tech Mono',monospace;letter-spacing:1px;margin-left:4px;}
+.legend{display:flex;justify-content:center;gap:22px;padding:13px 0 18px;border-top:1px solid #121c28;flex-wrap:wrap;width:1330px;margin:0 auto;}
+.li{display:flex;align-items:center;gap:7px;font-size:9.5px;color:#203545;}
+.ll{width:30px;height:2px;border-radius:1px;}
 </style>
 </head>
 <body>
 
-<div class="diagram-wrapper">
-
-  <div class="page-header">
-    <h1>FİZİKSEL BAĞLANTI DİYAGRAMI</h1>
-    <p>JETSON ORIN NX 16GB // PIXHAWK 6X // LIDAR S3 // CAMERA // TELEMETRY // ESC // POWER</p>
-  </div>
-
-  <!-- TOP DIAGRAM GRID -->
-  <div style="display:grid; grid-template-columns: 200px 1fr 200px; gap:14px; align-items:start;">
-
-    <!-- LEFT COLUMN -->
-    <div style="display:flex; flex-direction:column; gap:12px;">
-
-      <!-- CAMERA -->
-      <div class="node n-cam">
-        <div class="node-title">📷 KAMERA</div>
-        <div class="node-sub">Waveshare IMX219 / OAK-D / USB Cam</div>
-        <div class="pin-list">
-          <div class="pin-row">
-            <span class="pin-badge pin-csi">CSI</span>
-            <span class="pin-name">CSI-2 Konnektör</span>
-            <span class="pin-wire">15-pin Flat</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-usb">USB</span>
-            <span class="pin-name">USB 3.0 (alternatif)</span>
-            <span class="pin-wire">Type-A/C</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-pwr">3.3V</span>
-            <span class="pin-name">VCC (CSI'dan beslenir)</span>
-            <span class="pin-wire">Dahili</span>
-          </div>
-        </div>
-        <div style="margin-top:8px; font-family:'Share Tech Mono',monospace; font-size:8px; color:rgba(255,215,0,0.5);">
-          ──────────────── CSI-0 ────►<br>
-          ──────────────── USB3.0 ──►
-        </div>
-      </div>
-
-      <!-- LiDAR -->
-      <div class="node n-lidar">
-        <div class="node-title">🔴 LiDAR S3</div>
-        <div class="node-sub">SLAMTEC RPLIDAR S3 // 360°</div>
-        <div class="pin-list">
-          <div class="pin-row">
-            <span class="pin-badge pin-usb">USB</span>
-            <span class="pin-name">Micro-USB → Jetson USB3</span>
-            <span class="pin-wire">Micro-B</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-pwr">5V</span>
-            <span class="pin-name">USB'den beslenir</span>
-            <span class="pin-wire">500mA</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-uart">UART</span>
-            <span class="pin-name">Dahili UART/USB bridge</span>
-            <span class="pin-wire">CP2102</span>
-          </div>
-        </div>
-        <div style="margin-top:8px; font-family:'Share Tech Mono',monospace; font-size:8px; color:rgba(57,255,20,0.5);">
-          ──────────────── USB3.0 ──►<br>
-          /dev/ttyUSB0 veya /dev/ttyACM0
-        </div>
-      </div>
-
-      <!-- TELEMETRY -->
-      <div class="node n-telem">
-        <div class="node-title">📡 TELEMETRİ MODÜLÜ</div>
-        <div class="node-sub">SiK Radio // 433 MHz veya 900 MHz</div>
-        <div class="pin-list">
-          <div class="pin-row">
-            <span class="pin-badge pin-uart">UART</span>
-            <span class="pin-name">TX → Pixhawk TELEM1 RX</span>
-            <span class="pin-wire">Sarı</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-uart">UART</span>
-            <span class="pin-name">RX → Pixhawk TELEM1 TX</span>
-            <span class="pin-wire">Yeşil</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-pwr">5V</span>
-            <span class="pin-name">VCC → Pixhawk 5V Pin</span>
-            <span class="pin-wire">Kırmızı</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-gpio">GND</span>
-            <span class="pin-name">GND → Pixhawk GND</span>
-            <span class="pin-wire">Siyah</span>
-          </div>
-        </div>
-        <div style="margin-top:8px; font-family:'Share Tech Mono',monospace; font-size:8px; color:rgba(191,90,242,0.5);">
-          YKİ ◄──── RF 433MHz ────► TELEM1
-        </div>
-      </div>
-
-    </div>
-
-    <!-- CENTER: JETSON ORIN NX -->
-    <div>
-      <div class="jblock">
-        <div class="jblock-header">
-          <div class="jblock-title">JETSON ORIN NX 16GB</div>
-          <div class="jblock-sub">Carrier Board: Waveshare A603 // Ubuntu 22.04 // JetPack 5.x // ROS2 Humble</div>
-        </div>
-
-        <div class="jport-grid">
-
-          <div class="jport jport-csi">
-            <div class="jport-label">CSI-0 (15-pin)</div>
-            <div class="jport-conn">
-              <span class="jport-dot" style="background:var(--cam-c)"></span>KAMERA ← IMX219<br>
-              <span class="jport-dot" style="background:var(--cam-c)"></span>/dev/video0<br>
-              <span class="jport-dot" style="background:var(--cam-c)"></span>1920×1080 / 30fps<br>
-              <span class="jport-dot" style="background:var(--cam-c)"></span>OpenCV + GStreamer
-            </div>
-          </div>
-
-          <div class="jport jport-usb">
-            <div class="jport-label">USB 3.0 × 4 Port</div>
-            <div class="jport-conn">
-              <span class="jport-dot" style="background:var(--lidar-c)"></span>USB3-0 → LiDAR S3<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;/dev/ttyUSB0<br>
-              <span class="jport-dot" style="background:var(--cam-c)"></span>USB3-1 → Kamera (alt.)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;/dev/video0<br>
-              <span class="jport-dot" style="background:var(--dim)"></span>USB3-2 → Yedek/Flash
-            </div>
-          </div>
-
-          <div class="jport jport-uart">
-            <div class="jport-label">UART-1 (GPIO Pinler)</div>
-            <div class="jport-conn">
-              <span class="jport-dot" style="background:var(--jetson-c)"></span>TX (Pin-8) → PX6 UART2 RX<br>
-              <span class="jport-dot" style="background:var(--jetson-c)"></span>RX (Pin-10) → PX6 UART2 TX<br>
-              <span class="jport-dot" style="background:var(--dim)"></span>GND (Pin-6) → GND<br>
-              <span class="jport-dot" style="background:var(--dim)"></span>3.3V (Pin-1) → Dikkat!<br>
-              <span class="jport-dot" style="background:var(--pixhawk-c)"></span>MAVLink → MAVROS/pymavlink
-            </div>
-          </div>
-
-          <div class="jport jport-usb">
-            <div class="jport-label">USB-C (OTG / Data)</div>
-            <div class="jport-conn">
-              <span class="jport-dot" style="background:var(--dim)"></span>SSH / Debug erişimi<br>
-              <span class="jport-dot" style="background:var(--dim)"></span>Flash / Recovery<br>
-              <span class="jport-dot" style="background:var(--dim)"></span>Geliştirme ortamı
-            </div>
-          </div>
-
-          <div class="jport jport-gpio" style="grid-column:1/-1;">
-            <div class="jport-label">40-Pin GPIO (Ek Bağlantılar)</div>
-            <div class="jport-conn" style="display:grid; grid-template-columns:repeat(3,1fr); gap:4px;">
-              <div><span class="jport-dot" style="background:var(--power-c)"></span>Pin-2/4: 5V Çıkış</div>
-              <div><span class="jport-dot" style="background:var(--gps-c)"></span>Pin-1: 3.3V Çıkış</div>
-              <div><span class="jport-dot" style="background:var(--dim)"></span>Pin-6/9/14: GND</div>
-              <div><span class="jport-dot" style="background:var(--jetson-c)"></span>Pin-8/10: UART1 TX/RX</div>
-              <div><span class="jport-dot" style="background:var(--telem-c)"></span>Pin-19/21/23: SPI</div>
-              <div><span class="jport-dot" style="background:var(--gps-c)"></span>Pin-3/5: I2C-1</div>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="software-stack">
-          <div class="sw-title">▶ YAZILIM KATMANI</div>
-          <div class="sw-grid">
-            <span class="sw-item">ROS2 Humble</span>
-            <span class="sw-item">MAVROS</span>
-            <span class="sw-item">Nav2</span>
-            <span class="sw-item">YOLOv8</span>
-            <span class="sw-item">OpenCV 4.x</span>
-            <span class="sw-item">RPLIDAR SDK</span>
-            <span class="sw-item">TensorRT</span>
-            <span class="sw-item">PyMavlink</span>
-            <span class="sw-item">SLAM Toolbox</span>
-          </div>
-        </div>
-
-        <div style="padding:8px 10px; background:rgba(0,212,255,0.04); border:1px dashed rgba(0,212,255,0.15); border-radius:5px; font-family:'Share Tech Mono',monospace; font-size:8px; color:var(--dim); line-height:1.8; text-align:center;">
-          ◄ LiDAR USB3 &nbsp;|&nbsp; KAMERA CSI &nbsp;|&nbsp; PX6 UART ►<br>
-          ◄ COSTMAP &nbsp;|&nbsp; YOLO DETECT &nbsp;|&nbsp; GUIDED CMD ►
-        </div>
-
-      </div>
-    </div>
-
-    <!-- RIGHT COLUMN -->
-    <div style="display:flex; flex-direction:column; gap:12px;">
-
-      <!-- PIXHAWK 6X -->
-      <div class="node n-pixhawk">
-        <div class="node-title">🎯 PIXHAWK 6X</div>
-        <div class="node-sub">ArduRover Firmware</div>
-        <div class="pin-list">
-          <div class="pin-row">
-            <span class="pin-badge pin-uart">UART</span>
-            <span class="pin-name">TELEM1 → Telemetri Mod.</span>
-            <span class="pin-wire">6-pin JST</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-uart">UART</span>
-            <span class="pin-name">UART2 → Jetson GPIO</span>
-            <span class="pin-wire">3-pin (TX/RX/GND)</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-can">CAN1</span>
-            <span class="pin-name">CAN → ESC (opsiyonel)</span>
-            <span class="pin-wire">4-pin JST</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-pwm">PWM</span>
-            <span class="pin-name">Main Out 1 → ESC Sol</span>
-            <span class="pin-wire">3-pin Servo</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-pwm">PWM</span>
-            <span class="pin-name">Main Out 2 → ESC Sağ</span>
-            <span class="pin-wire">3-pin Servo</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-i2c">GPS</span>
-            <span class="pin-name">GPS1 → GPS Modülü</span>
-            <span class="pin-wire">6-pin JST</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-pwr">PWR</span>
-            <span class="pin-name">Power1 → Güç Modülü</span>
-            <span class="pin-wire">6-pin Molex</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-spi">RC IN</span>
-            <span class="pin-name">SBUS/PPM → RC Alıcı</span>
-            <span class="pin-wire">3-pin</span>
-          </div>
-        </div>
-        <div style="margin-top:8px; font-family:'Share Tech Mono',monospace; font-size:8px; color:rgba(255,107,53,0.5);">
-          UART2 ◄──MAVLink──► Jetson<br>
-          TELEM1 ──MAVLink──► YKİ
-        </div>
-      </div>
-
-      <!-- GPS -->
-      <div class="node n-gps">
-        <div class="node-title">🛰️ GPS MODÜLÜ</div>
-        <div class="node-sub">Here3 / M8N / F9P</div>
-        <div class="pin-list">
-          <div class="pin-row">
-            <span class="pin-badge pin-i2c">GPS1</span>
-            <span class="pin-name">Pixhawk GPS1 Portu</span>
-            <span class="pin-wire">6-pin JST</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-i2c">I2C</span>
-            <span class="pin-name">Dahili Pusula (I2C)</span>
-            <span class="pin-wire">Dahili</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- SAFETY -->
-      <div class="node n-safety">
-        <div class="node-title">🔴 EMNİYET SİSTEMİ</div>
-        <div class="node-sub">Kırmızı Anahtar + Uzak Kesme</div>
-        <div class="pin-list">
-          <div class="pin-row">
-            <span class="pin-badge pin-gpio">GPIO</span>
-            <span class="pin-name">Fiziki Kırmızı Anahtar</span>
-            <span class="pin-wire">Ana Hat</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-pwm">RC CH5</span>
-            <span class="pin-name">RC Kanal 5 → Motor Kes</span>
-            <span class="pin-wire">Pixhawk KILL</span>
-          </div>
-          <div class="pin-row">
-            <span class="pin-badge pin-uart">MAV</span>
-            <span class="pin-name">YKİ → DISARM komutu</span>
-            <span class="pin-wire">Yazılım</span>
-          </div>
-        </div>
-        <div style="margin-top:8px; font-family:'Share Tech Mono',monospace; font-size:8px; color:rgba(255,69,96,0.6);">
-          ⚠ Sadece sinyal kesmek yetmez!<br>
-          Fiziki güç kesilmeli – Şartname 4.2
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- BOTTOM: ESC + MOTORS + POWER -->
-  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-top:14px;">
-
-    <div class="node n-esc">
-      <div class="node-title">⚙️ ESC-1 (İSKELE / SOL)</div>
-      <div class="node-sub">30A+ BEC // BLDC Motor Sürücü</div>
-      <div class="pin-list">
-        <div class="pin-row">
-          <span class="pin-badge pin-pwm">PWM IN</span>
-          <span class="pin-name">Pixhawk Main Out 1</span>
-          <span class="pin-wire">Beyaz sinyal teli</span>
-        </div>
-        <div class="pin-row">
-          <span class="pin-badge pin-pwr">BATT+</span>
-          <span class="pin-name">Ana Batarya Pozitif</span>
-          <span class="pin-wire">Kırmızı 12-16AWG</span>
-        </div>
-        <div class="pin-row">
-          <span class="pin-badge pin-gpio">BATT-</span>
-          <span class="pin-name">Ana Batarya Negatif</span>
-          <span class="pin-wire">Siyah 12-16AWG</span>
-        </div>
-        <div class="pin-row">
-          <span class="pin-badge pin-motor" style="background:rgba(255,69,96,0.18);color:var(--esc-c);border:1px solid rgba(255,69,96,0.3);">M1/M2/M3</span>
-          <span class="pin-name">Thruster Sol (3-telli)</span>
-          <span class="pin-wire">Motor A/B/C</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="node n-esc">
-      <div class="node-title">⚙️ ESC-2 (SANCAK / SAĞ)</div>
-      <div class="node-sub">30A+ BEC // BLDC Motor Sürücü</div>
-      <div class="pin-list">
-        <div class="pin-row">
-          <span class="pin-badge pin-pwm">PWM IN</span>
-          <span class="pin-name">Pixhawk Main Out 2</span>
-          <span class="pin-wire">Beyaz sinyal teli</span>
-        </div>
-        <div class="pin-row">
-          <span class="pin-badge pin-pwr">BATT+</span>
-          <span class="pin-name">Ana Batarya Pozitif</span>
-          <span class="pin-wire">Kırmızı 12-16AWG</span>
-        </div>
-        <div class="pin-row">
-          <span class="pin-badge pin-gpio">BATT-</span>
-          <span class="pin-name">Ana Batarya Negatif</span>
-          <span class="pin-wire">Siyah 12-16AWG</span>
-        </div>
-        <div class="pin-row">
-          <span class="pin-badge pin-motor" style="background:rgba(255,69,96,0.18);color:var(--esc-c);border:1px solid rgba(255,69,96,0.3);">M1/M2/M3</span>
-          <span class="pin-name">Thruster Sağ (3-telli)</span>
-          <span class="pin-wire">Motor A/B/C</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="node n-power">
-      <div class="node-title">🔋 GÜÇ DAĞITIMI</div>
-      <div class="node-sub">LiPo 4-6S + Güç Modülü + BEC</div>
-      <div class="pin-list">
-        <div class="pin-row">
-          <span class="pin-badge pin-pwr">BATT</span>
-          <span class="pin-name">Ana Batarya (14.8V-22.2V)</span>
-          <span class="pin-wire">XT60 Konnektör</span>
-        </div>
-        <div class="pin-row">
-          <span class="pin-badge pin-pwr">5V/3A</span>
-          <span class="pin-name">BEC → Pixhawk + RC Alıcı</span>
-          <span class="pin-wire">UBEC</span>
-        </div>
-        <div class="pin-row">
-          <span class="pin-badge pin-pwr">12V/5A</span>
-          <span class="pin-name">DC-DC → Jetson (19V Adapte)</span>
-          <span class="pin-wire">Buck Konv.</span>
-        </div>
-        <div class="pin-row">
-          <span class="pin-badge pin-gpio">GND</span>
-          <span class="pin-name">Ortak Toprak (Tüm Cihazlar)</span>
-          <span class="pin-wire">Yıldız Bağlantı</span>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- DETAILED WIRING TABLE -->
-  <div class="section-box">
-    <div class="section-box-header">▶ DETAYLI KABLO BAĞLANTI TABLOSU</div>
-    <div class="section-box-body" style="padding:0;">
-      <table class="wiring-table">
-        <tr>
-          <th>KAYNAK CİHAZ</th>
-          <th>KAYNAK PIN/PORT</th>
-          <th>HEDEF CİHAZ</th>
-          <th>HEDEF PIN/PORT</th>
-          <th>KABLO</th>
-          <th>NOTLAR</th>
-        </tr>
-
-        <tr class="section-header"><td colspan="6">── JETSON ORIN NX BAĞLANTILARI ──</td></tr>
-
-        <tr>
-          <td class="col-from">Jetson Orin NX</td>
-          <td class="col-pin">GPIO Pin-8 (UART1_TX)</td>
-          <td class="col-to" style="color:var(--pixhawk-c);">Pixhawk 6X</td>
-          <td class="col-pin">UART2 RX</td>
-          <td class="col-wire" style="color:var(--jetson-c);">Sarı / 3.3V Logic</td>
-          <td class="col-note">MAVLink 115200 baud – RX/TX ÇAPRAZ bağlanır</td>
-        </tr>
-        <tr>
-          <td class="col-from">Jetson Orin NX</td>
-          <td class="col-pin">GPIO Pin-10 (UART1_RX)</td>
-          <td class="col-to" style="color:var(--pixhawk-c);">Pixhawk 6X</td>
-          <td class="col-pin">UART2 TX</td>
-          <td class="col-wire" style="color:var(--jetson-c);">Yeşil / 3.3V Logic</td>
-          <td class="col-note">⚠ 5V → 3.3V Logic Level Converter gerekebilir</td>
-        </tr>
-        <tr>
-          <td class="col-from">Jetson Orin NX</td>
-          <td class="col-pin">GPIO Pin-6 (GND)</td>
-          <td class="col-to" style="color:var(--pixhawk-c);">Pixhawk 6X</td>
-          <td class="col-pin">GND</td>
-          <td class="col-wire">Siyah</td>
-          <td class="col-note">Ortak toprak – zorunlu</td>
-        </tr>
-        <tr>
-          <td class="col-from">Jetson Orin NX</td>
-          <td class="col-pin">USB3.0 Port-0</td>
-          <td class="col-to" style="color:var(--lidar-c);">LiDAR S3</td>
-          <td class="col-pin">Micro-USB</td>
-          <td class="col-wire" style="color:var(--lidar-c);">USB3.0 Mavi Kablo</td>
-          <td class="col-note">/dev/ttyUSB0 – 115200 baud, ROS2 rplidar_ros2</td>
-        </tr>
-        <tr>
-          <td class="col-from">Jetson Orin NX</td>
-          <td class="col-pin">CSI-0 (15-pin FPC)</td>
-          <td class="col-to" style="color:var(--cam-c);">Kamera (IMX219)</td>
-          <td class="col-pin">CSI 15-pin FPC</td>
-          <td class="col-wire" style="color:var(--cam-c);">15-pin Flat Cable</td>
-          <td class="col-note">/dev/video0 – gst-launch veya OpenCV</td>
-        </tr>
-
-        <tr class="section-header"><td colspan="6">── PIXHAWK 6X BAĞLANTILARI ──</td></tr>
-
-        <tr>
-          <td class="col-from" style="color:var(--pixhawk-c);">Pixhawk 6X</td>
-          <td class="col-pin">TELEM1 (6-pin JST)</td>
-          <td class="col-to" style="color:var(--telem-c);">SiK Telemetri Modülü</td>
-          <td class="col-pin">6-pin JST</td>
-          <td class="col-wire" style="color:var(--telem-c);">6-pin JST-GH</td>
-          <td class="col-note">57600 baud – MAVLink → YKİ RF</td>
-        </tr>
-        <tr>
-          <td class="col-from" style="color:var(--pixhawk-c);">Pixhawk 6X</td>
-          <td class="col-pin">Main Out 1 (PWM)</td>
-          <td class="col-to" style="color:var(--esc-c);">ESC-1 (Sol Thruster)</td>
-          <td class="col-pin">PWM Signal</td>
-          <td class="col-wire" style="color:var(--esc-c);">3-pin Servo Kablosu</td>
-          <td class="col-note">1000-2000µs PWM – ArduRover Throttle Left</td>
-        </tr>
-        <tr>
-          <td class="col-from" style="color:var(--pixhawk-c);">Pixhawk 6X</td>
-          <td class="col-pin">Main Out 2 (PWM)</td>
-          <td class="col-to" style="color:var(--esc-c);">ESC-2 (Sağ Thruster)</td>
-          <td class="col-pin">PWM Signal</td>
-          <td class="col-wire" style="color:var(--esc-c);">3-pin Servo Kablosu</td>
-          <td class="col-note">1000-2000µs PWM – ArduRover Throttle Right</td>
-        </tr>
-        <tr>
-          <td class="col-from" style="color:var(--pixhawk-c);">Pixhawk 6X</td>
-          <td class="col-pin">GPS1 (6-pin JST)</td>
-          <td class="col-to" style="color:var(--gps-c);">GPS Modülü</td>
-          <td class="col-pin">UART + I2C</td>
-          <td class="col-wire" style="color:var(--gps-c);">6-pin JST-GH</td>
-          <td class="col-note">GNSS + Pusula (I2C)</td>
-        </tr>
-        <tr>
-          <td class="col-from" style="color:var(--pixhawk-c);">Pixhawk 6X</td>
-          <td class="col-pin">SBUS RC IN</td>
-          <td class="col-to">RC Alıcı</td>
-          <td class="col-pin">SBUS OUT</td>
-          <td class="col-wire">3-pin</td>
-          <td class="col-note">433 MHz RC – Manuel kontrol + Motor Kes Ch5</td>
-        </tr>
-        <tr>
-          <td class="col-from" style="color:var(--pixhawk-c);">Pixhawk 6X</td>
-          <td class="col-pin">Power1 (6-pin Molex)</td>
-          <td class="col-to" style="color:var(--power-c);">Güç Modülü</td>
-          <td class="col-pin">6-pin Çıkış</td>
-          <td class="col-wire" style="color:var(--power-c);">6-pin Molex</td>
-          <td class="col-note">5V + Voltaj/Akım sensörü</td>
-        </tr>
-
-        <tr class="section-header"><td colspan="6">── GÜÇ DAĞITIMI ──</td></tr>
-
-        <tr>
-          <td class="col-from" style="color:var(--power-c);">LiPo Batarya</td>
-          <td class="col-pin">XT60 (+) / (-)</td>
-          <td class="col-to">Power Distribution Board</td>
-          <td class="col-pin">XT60 Giriş</td>
-          <td class="col-wire" style="color:var(--power-c);">14AWG Kırmızı/Siyah</td>
-          <td class="col-note">⚠ Kırmızı fiziki anahtar bu hatta – Şartname 4.2</td>
-        </tr>
-        <tr>
-          <td class="col-from" style="color:var(--power-c);">PDB / Buck</td>
-          <td class="col-pin">5V/3A Çıkış</td>
-          <td class="col-to" style="color:var(--pixhawk-c);">Pixhawk 6X</td>
-          <td class="col-pin">Power1</td>
-          <td class="col-wire">5V Kırmızı</td>
-          <td class="col-note">Güç modülü üzerinden</td>
-        </tr>
-        <tr>
-          <td class="col-from" style="color:var(--power-c);">PDB / Buck</td>
-          <td class="col-pin">12-19V Çıkış</td>
-          <td class="col-to" style="color:var(--jetson-c);">Jetson Orin NX</td>
-          <td class="col-pin">DC Jack / GPIO 5V</td>
-          <td class="col-wire">DC Jack / XT30</td>
-          <td class="col-note">A603 Carrier Board – 9-19V giriş kabul eder</td>
-        </tr>
-
-      </table>
-    </div>
-  </div>
-
-  <!-- CRITICAL NOTES -->
-  <div style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-    <div style="padding:14px; background:rgba(255,107,53,0.06); border:1px solid rgba(255,107,53,0.3); border-radius:6px; border-left:3px solid var(--pixhawk-c);">
-      <div style="font-family:'Orbitron',monospace; font-size:10px; color:var(--pixhawk-c); letter-spacing:2px; margin-bottom:8px;">⚠ KRİTİK NOTLAR</div>
-      <div style="font-family:'Share Tech Mono',monospace; font-size:9px; color:rgba(255,107,53,0.8); line-height:1.9;">
-        • Jetson GPIO 3.3V – Pixhawk UART 5V → Logic Level Converter kullan!<br>
-        • RX ↔ TX mutlaka çapraz bağlanmalı (TX→RX, RX→TX)<br>
-        • Ortak toprak (GND) tüm cihazlar için bağlanmalı<br>
-        • WiFi + 2.4GHz tamamen kapalı olmalı (BIOS/Jetson OS seviyesinde)<br>
-        • ESC kalibrasyonu yapılmalı – Pixhawk MAVLink ile<br>
-        • ArduRover "Skid Steering" frame type seçilmeli
-      </div>
-    </div>
-    <div style="padding:14px; background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.2); border-radius:6px; border-left:3px solid var(--jetson-c);">
-      <div style="font-family:'Orbitron',monospace; font-size:10px; color:var(--jetson-c); letter-spacing:2px; margin-bottom:8px;">◈ PARAMETRELER</div>
-      <div style="font-family:'Share Tech Mono',monospace; font-size:9px; color:rgba(0,212,255,0.7); line-height:1.9;">
-        • ArduRover SERIAL2_PROTOCOL = 2 (MAVLink2)<br>
-        • SERIAL2_BAUD = 115 (115200 baud)<br>
-        • MAVROS: /dev/ttyTHS1 veya /dev/ttyS0<br>
-        • LiDAR: /dev/ttyUSB0 @ 115200<br>
-        • Kamera: /dev/video0 – OpenCV cap<br>
-        • FRAME_CLASS = 2 (Boat / Skid Steer)<br>
-        • RC_MAP_KILL_CH = 5 (Motor Kes)
-      </div>
-    </div>
-  </div>
-
-  <div style="margin-top:16px; text-align:center; font-family:'Share Tech Mono',monospace; font-size:8px; color:var(--dim); letter-spacing:2px; padding:12px 0; border-top:1px solid var(--border);">
-    TEKNOFEST 2026 // FİZİKSEL KABLO ŞEMASI v1.0 // JETSON ORIN NX + PIXHAWK 6X + LIDAR S3 + CAMERA + TELEMETRY + ESC
-  </div>
-
+<div class="hdr">
+  <h1>⚓ İDA <span>–</span> SİSTEM BAĞLANTI HARİTASI</h1>
+  <p>TEKNOFEST 2026 · Herhangi bir bileşenin üzerine gelin ve detaylarını görün</p>
 </div>
+
+<div class="cvs">
+
+<svg class="lines" viewBox="0 0 1330 780" xmlns="http://www.w3.org/2000/svg">
+  <!-- BATARYA → TAŞIYICI (turuncu kesik) -->
+  <line x1="230" y1="182" x2="364" y2="182" stroke="#ff8c00" stroke-width="1.5" stroke-dasharray="5,4" opacity=".7"/>
+  <circle cx="364" cy="182" r="2.5" fill="#ff8c00" opacity=".8"/>
+  <!-- BATARYA → KAMERA (turuncu kesik dikey) -->
+  <line x1="124" y1="238" x2="124" y2="510" stroke="#ff8c00" stroke-width="1.5" stroke-dasharray="5,4" opacity=".45"/>
+  <circle cx="124" cy="510" r="2.5" fill="#ff8c00" opacity=".6"/>
+  <!-- TAŞIYICI → YKİ (kırmızı kesik) -->
+  <path d="M 938 248 C 978 210, 1015 182, 1052 172" stroke="#ff4650" stroke-width="1.5" stroke-dasharray="5,4" opacity=".72" fill="none"/>
+  <circle cx="1052" cy="172" r="2.5" fill="#ff4650" opacity=".8"/>
+  <!-- TAŞIYICI-ALT → KAMERA (mor) -->
+  <line x1="462" y1="530" x2="190" y2="510" stroke="#b454ff" stroke-width="1.5" opacity=".75"/>
+  <circle cx="190" cy="510" r="2.5" fill="#b454ff" opacity=".8"/>
+  <!-- TAŞIYICI-ALT → LiDAR (teal) -->
+  <line x1="572" y1="530" x2="510" y2="510" stroke="#00c8aa" stroke-width="1.5" opacity=".75"/>
+  <circle cx="510" cy="510" r="2.5" fill="#00c8aa" opacity=".8"/>
+  <!-- TAŞIYICI-ALT → GPS (teal kesik) -->
+  <line x1="762" y1="530" x2="778" y2="510" stroke="#00c8aa" stroke-width="1.5" stroke-dasharray="5,4" opacity=".7"/>
+  <circle cx="778" cy="510" r="2.5" fill="#00c8aa" opacity=".8"/>
+  <!-- TAŞIYICI-ALT → AKTÜATÖRLER (sarı kesik) -->
+  <line x1="904" y1="530" x2="1095" y2="510" stroke="#ffd200" stroke-width="1.5" stroke-dasharray="5,4" opacity=".72"/>
+  <circle cx="1095" cy="510" r="2.5" fill="#ffd200" opacity=".8"/>
+
+  <!-- DC Güç etiketi -->
+  <rect x="234" y="173" width="72" height="15" rx="3" fill="#170f00" stroke="#ff8c00" stroke-width=".7" opacity=".92"/>
+  <text x="270" y="184" font-family="Share Tech Mono" font-size="8.5" fill="#ff8c00" text-anchor="middle" letter-spacing=".4">DC Güç</text>
+  <!-- RF Telemetri etiketi -->
+  <rect x="936" y="256" width="88" height="15" rx="3" fill="#160306" stroke="#ff4650" stroke-width=".7" opacity=".92"/>
+  <text x="980" y="267" font-family="Share Tech Mono" font-size="8.5" fill="#ff4650" text-anchor="middle" letter-spacing=".4">RF Telemetri</text>
+  <!-- USB 3.0 Video etiketi -->
+  <rect x="296" y="489" width="100" height="15" rx="3" fill="#0e0520" stroke="#b454ff" stroke-width=".7" opacity=".92"/>
+  <text x="346" y="500" font-family="Share Tech Mono" font-size="8.5" fill="#b454ff" text-anchor="middle" letter-spacing=".4">USB 3.0 · Video</text>
+  <!-- USB Tarama etiketi -->
+  <rect x="492" y="489" width="80" height="15" rx="3" fill="#001510" stroke="#00c8aa" stroke-width=".7" opacity=".92"/>
+  <text x="532" y="500" font-family="Share Tech Mono" font-size="8.5" fill="#00c8aa" text-anchor="middle" letter-spacing=".4">USB · Tarama</text>
+  <!-- CAN/UART etiketi -->
+  <rect x="726" y="489" width="78" height="15" rx="3" fill="#001510" stroke="#00c8aa" stroke-width=".7" opacity=".92"/>
+  <text x="765" y="500" font-family="Share Tech Mono" font-size="8.5" fill="#00c8aa" text-anchor="middle" letter-spacing=".4">CAN / UART</text>
+  <!-- PWM Sinyalleri etiketi -->
+  <rect x="1044" y="489" width="96" height="15" rx="3" fill="#141000" stroke="#ffd200" stroke-width=".7" opacity=".92"/>
+  <text x="1092" y="500" font-family="Share Tech Mono" font-size="8.5" fill="#ffd200" text-anchor="middle" letter-spacing=".4">PWM Sinyalleri</text>
+</svg>
+
+<!-- LiPo BATARYA -->
+<div class="bx bx-orange" style="left:18px;top:130px;width:214px;">
+  <div class="bt" style="color:#ff8c00;">🔋 LiPo BATARYA</div>
+  <div class="r"><span class="i">→</span><span>Güvenlik Anahtarı <b>🔴</b></span></div>
+  <div class="r"><span class="i">→</span><span>Güç Modülü</span></div>
+  <div class="r"><span class="i">→</span><span>Buck Dönüştürücü → Jetson</span></div>
+  <div class="r"><span class="i">→</span><span>PDB → ESC-1 &amp; ESC-2</span></div>
+  <div class="r" style="margin-top:5px;font-size:9.5px;color:#2a1a00;">Tüm birimlere güç dağıtır</div>
+</div>
+
+<!-- YKİ – YER KONTROL İSTASYONU -->
+<div class="bx bx-red" style="right:18px;top:130px;width:224px;">
+  <div class="bt" style="color:#ff4650;">🖥️ YKİ — YER KONTROL</div>
+  <div class="r"><span class="i">🗺️</span><b>Gerçek Zamanlı</b> Harita</div>
+  <div class="r"><span class="i">📍</span><b>Görev Noktası</b> Yükle</div>
+  <div class="r"><span class="i">▶️</span><b>Görevi Başlat</b></div>
+  <div class="r"><span class="i">🔴</span><b style="color:#ff4650;">Motor Kes</b><span class="kb">Yalnızca</span></div>
+  <div class="r"><span class="i">✖</span><span style="color:#2e1018;">Hareket sırasında komut yok</span></div>
+</div>
+
+<!-- TAŞIYICI KART -->
+<div class="carrier" style="left:364px;top:116px;width:576px;">
+  <div class="ch">🖥️ PAB-BASE-ORINNX-RC04 — TAŞIYICI KART</div>
+  <!-- Jetson -->
+  <div class="inner inner-j" style="margin-bottom:0;">
+    <div class="bt" style="color:#00d26e;margin-bottom:5px;">
+      🧠 JETSON ORIN NX<span class="sl">GÖRÜNTÜ + YAPAY ZEKA</span>
+    </div>
+    <div class="r"><span class="i">📷</span><b>Kamera (CSI/USB)</b> → YOLOv8 Tespiti</div>
+    <div class="r"><span class="i">📐</span>Hesaplama <b>offset_norm</b> (−1 → +1)</div>
+    <div class="r"><span class="i">🔴</span><b>RPLiDAR S3</b> → SLAM → Maliyet Haritası</div>
+    <div class="r"><span class="i">💾</span><b>MP4 + CSV + Harita</b> → USB Kayıt</div>
+    <div class="r"><span class="i">📡</span><b>offset</b> → Pixhawk'a (Dahili UART)</div>
+  </div>
+  <!-- UART köprüsü -->
+  <div class="ub">↑↓ &nbsp;&nbsp; DAHİLİ UART 10Hz &nbsp;&nbsp; ↑↓</div>
+  <!-- Pixhawk -->
+  <div class="inner inner-p" style="margin-bottom:0;">
+    <div class="bt" style="color:#00c8aa;margin-bottom:5px;">
+      🎯 PIXHAWK 6X<span class="sl">OTOPİLOT</span>
+    </div>
+    <div class="r"><span class="i">📐</span><b>offset_norm</b> ← Jetson'dan</div>
+    <div class="r"><span class="i">🌀</span><b>PID Kontrolcüsü</b> → Hedef Yön Açısı</div>
+    <div class="r"><span class="i">🌍</span><b>GPS Noktaları</b> → Parkur 1 &amp; 2</div>
+    <div class="r"><span class="i">💥</span><b>Kamikaze Modu</b> → Parkur 3</div>
+    <div class="r"><span class="i">⚙️</span><b>PWM</b> → ESC + Servo</div>
+    <div class="r"><span class="i">📡</span><b>Telemetri RF</b> → YKİ'ye</div>
+  </div>
+  <div style="height:13px;"></div>
+</div>
+
+<!-- KAMERA -->
+<div class="bx bx-purple" style="left:18px;top:508px;width:238px;">
+  <div class="bt" style="color:#b454ff;margin-bottom:4px;">📷 KAMERA</div>
+  <div class="bs">Waveshare IMX219 · CSI / USB</div>
+  <div class="r"><span class="i">🔵</span>Stereo / RGB Görüntü</div>
+  <div class="r"><span class="i">🔵</span>Derinlik: 0.3 → 20m</div>
+  <div class="r"><span class="i">🔵</span>RGB + Derinlik Haritası</div>
+  <div class="r"><span class="i" style="color:#b454ff;">📌</span>USB 3.0 → Jetson</div>
+  <div class="r"><span class="i">🎯</span>Hedef Tespiti</div>
+  <div class="r"><span class="i">💾</span>MP4 + Zaman Damgası Kaydı</div>
+  <div style="margin-top:7px;"><span class="bd bd-o">DC Güç</span></div>
+</div>
+
+<!-- RPLiDAR S3 -->
+<div class="bx bx-teal" style="left:270px;top:508px;width:232px;">
+  <div class="bt" style="color:#00c8aa;margin-bottom:4px;">🔴 RPLiDAR S3</div>
+  <div class="bs">SLAMTEC · 360° · Menzil 40 m</div>
+  <div class="r"><span class="i">🟢</span>360° Tarama</div>
+  <div class="r"><span class="i">🟢</span><b>Menzil: 40</b> Metre</div>
+  <div class="r" style="color:#1a3030;">USB → Jetson</div>
+  <div class="r"><span class="i">🗺️</span>SLAM → 2D Maliyet Haritası</div>
+  <div class="r"><span class="i">⚠️</span>Engel Tespiti</div>
+  <div class="r"><span class="i">💾</span>1 Hz Veri Kaydı</div>
+</div>
+
+<!-- GPS + SENSÖRLER -->
+<div class="bx bx-teal" style="left:516px;top:508px;width:268px;">
+  <div class="bt" style="color:#00c8aa;margin-bottom:4px;">🛰️ GPS + SENSÖRLER</div>
+  <div class="bs">Here3+ · IMU · RC Alıcı · SiK</div>
+  <div class="r"><span class="i">🌍</span>Here3+ GPS <span class="bd bd-t">CAN</span></div>
+  <div class="r"><span class="i">🔄</span>IMU (Yalpa/Yunuslama/Pervane)</div>
+  <div class="r"><span class="i">📻</span>RC Alıcı <span class="bd bd-t">SBUS</span></div>
+  <div class="r"><span class="i">📡</span>Telemetri Modülü <span class="bd bd-r">433 MHz</span></div>
+  <div class="r"><span class="i">📌</span>Tümü → Pixhawk'a bağlı</div>
+  <div class="r" style="margin-top:4px;"><span class="i">⚠️</span><span style="color:#2e1018;">WiFi KAPALI – 2.4 GHz YASAK</span></div>
+</div>
+
+<!-- AKTÜATÖRLER -->
+<div class="bx bx-yellow" style="left:800px;top:508px;width:264px;">
+  <div class="bt" style="color:#ffd200;margin-bottom:4px;">⚙️ AKTÜATÖRLER</div>
+  <div class="bs">ESC×2 · İticiler · Güvenlik Anahtarı</div>
+  <div class="r"><span class="i">🔵</span>ESC×2 → İticiler</div>
+  <div class="r"><span class="i">🔵</span>Servo → Dümen</div>
+  <div class="r" style="color:#2a2200;">PWM ← Pixhawk'tan</div>
+  <div class="r"><span class="i">⚡</span>DC Güç ← Güç Modülü</div>
+  <div class="r"><span class="i">🔴</span><b>Motor Kes</b><span class="kb">(Fiziksel)</span></div>
+  <div class="r" style="margin-top:4px;font-size:9.5px;color:#2a2200;">⚠ Nozul Koruması + Su İzolasyonu</div>
+</div>
+
+</div><!-- /cvs -->
+
+<div class="legend">
+  <div class="li"><div class="ll" style="background:none;border-top:2px dashed #ff8c00;"></div> DC Güç</div>
+  <div class="li"><div class="ll" style="background:#00d26e;"></div> Dahili UART (offset_norm)</div>
+  <div class="li"><div class="ll" style="background:#b454ff;"></div> USB 3.0 (Kamera Videosu)</div>
+  <div class="li"><div class="ll" style="background:#00c8aa;"></div> USB (LiDAR) / CAN (GPS)</div>
+  <div class="li"><div class="ll" style="background:none;border-top:2px dashed #ffd200;"></div> PWM → Aktüatörler</div>
+  <div class="li"><div class="ll" style="background:none;border-top:2px dashed #ff4650;"></div> RF Telemetri → YKİ</div>
+</div>
+
 </body>
 </html>
